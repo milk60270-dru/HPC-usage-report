@@ -1,0 +1,39 @@
+  # Dependabot 自動依賴項安全更新設定
+   version: 2
+   updates:
+     # Python 套件 (pip)
+     - package-ecosystem: "pip"
+       directory: "/"
+       schedule:
+         interval: "weekly"
+         day: "monday"
+         time: "09:00"
+         timezone: "Asia/Taipei"
+       labels:
+         - "dependencies"
+         - "security"
+       # 自動指派審查者（請替換為實際 GitHub 帳號）
+       # reviewers:
+       #   - "your-github-username"
+       open-pull-requests-limit: 10
+       # 安全更新：自動合併 patch 級別的更新
+       allow:
+         - dependency-type: "all"
+       commit-message:
+         prefix: "chore(deps)"
+         include: "scope"
+   
+     # GitHub Actions 版本更新
+     - package-ecosystem: "github-actions"
+       directory: "/"
+       schedule:
+         interval: "weekly"
+         day: "monday"
+         time: "09:00"
+         timezone: "Asia/Taipei"
+       labels:
+         - "dependencies"
+         - "ci"
+       open-pull-requests-limit: 5
+       commit-message:
+         prefix: "ci(deps)"

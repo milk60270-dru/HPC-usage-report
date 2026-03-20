@@ -1,0 +1,68 @@
+   # CodeQL 靜態應用程式安全檢測
+   # 此 Workflow 會在 push/PR 時自動掃描程式碼中的安全漏洞
+   # .github/workflows/codeql-analysis.yml
+   
+   name: "CodeQL Security Scan"
+   
+   on:
+     push:
+       branches: [main]
+     pull_request:
+       branches: [main]
+     schedule:
+       # 每週一 UTC 08:00 定期掃描（可偵測新發現的漏洞模式）
+       - cron: "0 8 * * 1"
+   
+   jobs:
+     analyze:
+       name: Analyze
+       runs-on: ubuntu-latest
+   
+       permissions:
+         actions: read
+         contents: read
+         security-events: write  # 必要：上傳 SARIF 結果至 Security 分頁
+   
+       strategy:
+         fail-fast: false
+         matrix:
+           language: ["python"]
+           # 若專案含多種語言，可加入：javascript, java, go, ruby, csharp, cpp
+   
+       steps:
+         - name: 取得原始碼
+           uses: actions/checkout@v4
+   
+         - name: 初始化 CodeQL
+           uses: github/codeql-action/init@v3
+           with:
+             languages: ${{ matrix.language }}
+             # 可選：使用額外的查詢套件加強掃描範圍
+             queries: security-and-quality
+   
+         - name: 自動建置 (Autobuild)
+           uses: github/codeql-action/autobuild@v3
+           # Python 專案通常不需要手動建置步驟
+           # 若需要自訂建置，可替換為手動步驟：
+           # - run: pip install -r requirements.txt
+   
+         - name: 執行 CodeQL 分析
+           uses: github/codeql-action/analyze@v3
+           with:
+             category: "/language:${{ matrix.language }}"
+             # 分析結果會自動上傳至 GitHub Security → Code Scanning
+
+
+
+
+#  ┌───────────────────────────┬───────────────┬───────────────────────┐
+#  │ Action                    │ 舊版           │ 建議版本               │
+#  ├───────────────────────────┼───────────────┼───────────────────────┤
+#  │ github/codeql-action/*    │ @v2 / @v3     │ @v4                   │
+#  ├───────────────────────────┼───────────────┼───────────────────────┤
+#  │ actions/checkout          │ @v3           │ @v4                   │
+#  ├───────────────────────────┼───────────────┼───────────────────────┤
+#  │ actions/setup-python      │ @v4           │ @v5                   │
+#  ├───────────────────────────┼───────────────┼───────────────────────┤
+#  │ actions/upload-artifact   │ @v3           │ @v4                   │
+#  └───────────────────────────┴───────────────┴───────────────────────┘

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}SpeedyPizza — 查詢訂單{% endblock %}
+
+{% block content %}
+<section class="order-status">
+    <h1>🔍 查詢訂單狀態</h1>
+    <p>輸入您的訂單編號，即可查看目前的處理狀態。</p>
+
+    <form method="GET" action="{{ url_for('order_status') }}" class="search-form">
+        <div class="form-group">
+            <label for="order_id">訂單編號</label>
+            <input type="text" id="order_id" name="order_id" placeholder="例如：1" value="{{ order_id or '' }}">
+        </div>
+        <button type="submit" class="btn btn-primary">查詢</button>
+    </form>
+
+    {% if error %}
+    <div class="alert alert-error">
+        <p>❌ {{ error }}</p>
+    </div>
+    {% endif %}
+
+    {% if result %}
+    <div class="result-card">
+        <h2>訂單資訊</h2>
+        <table class="result-table">
+            <tr>
+                <th>訂單編號</th>
+                <td>#{{ result.id }}</td>
+            </tr>
+            <tr>
+                <th>客戶姓名</th>
+                <td>{{ result.customer_name }}</td>
+            </tr>
+            <tr>
+                <th>披薩品項</th>
+                <td>{{ result.pizza_name }}</td>
+            </tr>
+            <tr>
+                <th>數量</th>
+                <td>{{ result.quantity }}</td>
+            </tr>
+            <tr>
+                <th>訂單狀態</th>
+                <td>
+                    {% if result.status == 'preparing' %}
+                        🍳 準備中
+                    {% elif result.status == 'delivering' %}
+                        🚗 外送中
+                    {% elif result.status == 'delivered' %}
+                        ✅ 已送達
+                    {% else %}
+                        {{ result.status }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>下單時間</th>
+                <td>{{ result.created_at }}</td>
+            </tr>
+        </table>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

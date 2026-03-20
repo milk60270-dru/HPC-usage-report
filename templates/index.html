@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}SpeedyPizza 🍕 — 美味披薩，快速送達{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>🍕 歡迎來到 SpeedyPizza</h1>
+    <p>台北最快的披薩外送服務！從下單到送達，只要 30 分鐘！</p>
+    <a href="{{ url_for('order') }}" class="btn btn-primary">立即訂購</a>
+</section>
+
+<section class="menu">
+    <h2>📋 今日菜單</h2>
+    <div class="pizza-grid">
+        {% for pizza in pizzas %}
+        <div class="pizza-card">
+            <h3>{{ pizza.name }}</h3>
+            <p class="description">{{ pizza.description }}</p>
+            <p class="price">NT$ {{ "%.0f"|format(pizza.price) }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="cta">
+    <h2>查詢您的訂單</h2>
+    <p>已經下單了嗎？輸入您的訂單編號查看目前狀態。</p>
+    <a href="{{ url_for('order_status') }}" class="btn btn-secondary">查詢訂單</a>
+</section>
+{% endblock %}
