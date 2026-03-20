@@ -95,10 +95,16 @@ def order_status():
 
     if order_id:
         db = get_db()
-        # ⚠️ 危險：使用字串拼接建構 SQL 查詢
-        query = "SELECT orders.id, customer_name, pizzas.name as pizza_name, quantity, status, created_at FROM orders JOIN pizzas ON orders.pizza_id = pizzas.id WHERE orders.id = '" + order_id + "'"
+        # 使用參數化查詢避免 SQL Injection
+        query = (
+            "SELECT orders.id, customer_name, pizzas.name as pizza_name, "
+            "quantity, status, created_at "
+            "FROM orders "
+            "JOIN pizzas ON orders.pizza_id = pizzas.id "
+            "WHERE orders.id = ?"
+        )
         try:
-            result = db.execute(query).fetchone()
+            result = db.execute(query, (order_id,)).fetchone()
             if result is None:
                 error = "找不到此訂單編號，請確認後重試。"
         except Exception as e:
